@@ -1,114 +1,106 @@
-# 🔒 KoboToolbox Batch User Activation/Deactivation via Admin Panel
 
-This Python script automates the **activation or deactivation** of KoboToolbox users through the Django admin panel using **Selenium** and a manually supplied **session cookie** (e.g., `kobonaut`). This is especially useful when:
-- You **cannot use the API or shell**,
-- You’re managing a large number of users,
-- MFA is enabled (manual login is required),
-- You want to reuse your **logged-in browser session**.
+# KoboToolbox User Activation/Deactivation Script
+
+This Python script automates the activation or deactivation of user accounts in the KoboToolbox Django admin panel by simulating browser actions via Selenium.
 
 ---
 
-## 🚀 Features
+## 🔧 Features
 
-- ✅ Activate or deactivate users in bulk via Django Admin
-- 🧠 Uses your own session cookie (bypass login)
-- 🎭 Supports headless and visible browser modes
-- 📝 Logs every action with timestamps and errors
-- 🛡️ Graceful error handling with detailed messages
+- Activate or deactivate users by ID via the admin panel
+- Uses your active session cookie to authenticate (no login needed)
+- Logs activity to both `.txt` and `.csv` files
+- Supports headless mode for automation
 
 ---
 
-## 📦 Requirements
+## 📁 Requirements
 
 - Python 3.8+
-- Google Chrome installed
+- Google Chrome (latest stable version)
 - [ChromeDriver](https://sites.google.com/chromium.org/driver/) matching your Chrome version
 - Python packages:
-
-```bash
-pip install selenium pandas
-```
+  ```bash
+  pip install selenium pandas
+  ```
 
 ---
 
-## 🛠️ Setup
+## 📂 Files
 
-### 1. Get your session cookie from Chrome
-- Open DevTools (`F12`) → `Application` tab → `Cookies`
-- Copy the value of the `kobonaut` (or `sessionid`) cookie for your domain  
-  _(e.g., `https://KPI`)_
+- `deactivate_users.py`: The main script
+- `users.csv`: A CSV with a `user_id` column
+- `user_update_log.txt`: Log file with full details (timestamp, actions)
+- `user_update_log_{server_name}_{timestamp}.csv`: One-line-per-user summary
 
-### 2. Prepare your CSV file
-Save as `users.csv` with the following structure:
+---
+
+## 📋 users.csv Format
 
 ```csv
 user_id
 5
+25
 8
-12
 ```
 
-Each value should match the numeric ID from the Django Admin URL:  
-`https://yourdomain/admin/kobo_auth/user/<user_id>/change/`
+---
 
-### 3. Edit the script config
+## ⚙️ Configuration
 
-In the script file:
+In `script.py`, edit the `CONFIG` dictionary:
 
 ```python
 CONFIG = {
-    'base_url': 'https://KPI',
-    'cookie_name': 'kobonaut',  # or 'sessionid'
-    'cookie_value': 'your-session-cookie-here',
-    'mode': 'deactivate',       # or 'activate'
+    'base_url': 'https://KPI',               # Your KoboToolbox URL
+    'cookie_name': 'kobonaut',               # Your session cookie name (typically kobonaut or sessionid)
+    'cookie_value': '<your_cookie_here>',    # Paste your browser cookie here
+    'mode': 'deactivate',                    # activate or deactivate users
     'admin_user_path': '/admin/kobo_auth/user/',
-    'headless': False,          # True to hide browser
-    'wait_timeout': 10
+    'headless': False,                       # Set to True for headless browser
+    'wait_timeout': 10                       # Seconds to wait for elements
 }
 ```
+
+To get your session cookie:
+1. Open the KoboToolbox admin panel in Chrome.
+2. Press F12 to open Developer Tools → Application → Cookies.
+3. Find the cookie named `kobonaut` (or `sessionid`) and copy its value.
 
 ---
 
 ## ▶️ Running the Script
 
-Run the script from your terminal:
-
 ```bash
 python deactivate_users.py
 ```
 
-You’ll see the log in the terminal, and it will also be saved to `user_update_log.txt`.
+The script will:
+- Load the cookie into a fresh Chrome session.
+- Loop through all user IDs from `users.csv`.
+- Activate or deactivate users depending on the `mode`.
+- Log results to both `.txt` and `.csv`.
 
 ---
 
-## 📓 Example Output
+## ✅ Example Output
 
-```bash
-2025-07-09 15:01:23 - ✅ User 5 deactivated successfully.
-2025-07-09 15:01:27 - ✅ User 8 deactivated successfully.
-
-🎉 Done! Log saved to: user_update_log.txt
+```txt
+2025-07-28 23:09:42 - Browser loaded and cookie applied successfully.
+2025-07-28 23:09:43 - Attempting to process user 5...
+2025-07-28 23:09:44 - ✅ User 5 deactivated.
 ```
 
 ---
 
-## ❗ Notes
+## 🧪 Notes
 
-- The script navigates to:  
-  `https://<your-domain>/admin/kobo_auth/user/<user_id>/change/`
-- Make sure the user IDs exist or you'll see "Element not found" errors.
-- If MFA is enabled, log in manually in Chrome, copy the cookie, and reuse it.
-- Your session may expire after a while — replace the cookie if needed.
-
----
-
-## 🔐 Disclaimer
-
-This script manipulates Django Admin UI directly.  
-Use with caution. It's intended for KoboToolbox superadmins.
+- The script assumes you have Django admin rights.
+- If MFA or additional prompts block access, the cookie must reflect an active session.
+- Errors are logged with reasons (timeout, element not found, etc.).
 
 ---
 
 ## 📄 License
 
-MIT License — free to use, modify, or share, but do so responsibly and at your own risk.
+MIT License – Use freely and adapt for your needs.
