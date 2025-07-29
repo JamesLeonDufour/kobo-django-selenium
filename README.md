@@ -53,7 +53,7 @@ In `script.py`, edit the `CONFIG` dictionary:
 ```python
 CONFIG = {
     'base_url': 'https://KPI',               # Your KoboToolbox URL
-    'cookie_name': 'kobonaut',               # Your session cookie name (typically kobonaut or sessionid)
+    'cookie_name': 'kobonaut',               # Your session cookie name (typically kobonaut)
     'cookie_value': '<your_cookie_here>',    # Paste your browser cookie here
     'mode': 'deactivate',                    # activate or deactivate users
     'admin_user_path': '/admin/kobo_auth/user/',
@@ -65,7 +65,7 @@ CONFIG = {
 To get your session cookie:
 1. Open the KoboToolbox admin panel in Chrome.
 2. Press F12 to open Developer Tools → Application → Cookies.
-3. Find the cookie named `kobonaut` (or `sessionid`) and copy its value.
+3. Find the cookie named `kobonaut` and copy its value.
 
 ---
 
